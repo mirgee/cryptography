@@ -1,4 +1,5 @@
-from typing import List, Tuple
+from typing import List
+from tinyec.ec import Point
 
 from .mod_arith import mod_add, mod_mul
 from .group import group_add, group_scalar_mul, group_identity
@@ -12,7 +13,7 @@ def inner_z(a: List[int], b: List[int]) -> int:
     return result
 
 
-def inner_g(a: List[int], G: List[int]) -> int:
+def inner_g(a: List[int], G: List[Point]) -> Point:
     assert len(a) == len(G)
     result = group_identity()
     for x, g in zip(a, G):

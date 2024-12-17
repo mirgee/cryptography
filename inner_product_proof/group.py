@@ -1,18 +1,27 @@
-import random
-from .mod_arith import MODULUS, mod_add, mod_inv, mod_mul
+import secrets
+
+from tinyec import registry
+from tinyec.ec import Inf, Point
+
+curve = registry.get_curve("secp192r1")
 
 
-def group_scalar_mul(generator: int, scalar: int) -> int:
-    return mod_mul(generator, scalar)
+def group_scalar_mul(point: Point, scalar: int) -> Point:
+    return scalar * point
 
 
-def group_add(point1: int, point2: int) -> int:
-    return mod_add(point1, point2)
+def group_add(point1: Point, point2: Point) -> Point:
+    return point1 + point2
 
 
-def group_identity() -> int:
-    return 0
+def group_sub(point1: Point, point2: Point) -> Point:
+    return point1 - point2
 
 
-def random_group_element() -> int:
-    return random.randint(1, MODULUS - 1)
+def group_identity() -> Point:
+    return Inf(curve)
+
+
+def random_group_element() -> Point:
+    random_scalar = secrets.randbelow(curve.field.n)
+    return group_scalar_mul(curve.g, random_scalar)

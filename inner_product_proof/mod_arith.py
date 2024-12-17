@@ -1,6 +1,7 @@
 import random
+from inner_product_proof.group import curve
 
-MODULUS = 2**255 - 19
+MODULUS = curve.field.n
 
 
 def mod_add(x: int, y: int) -> int:

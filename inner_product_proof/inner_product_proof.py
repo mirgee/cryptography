@@ -1,28 +1,30 @@
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import List
 
-from .mod_arith import mod_add, mod_inv, mod_mul, mod_sub, random_scalar
-from .group import group_add, group_identity, group_scalar_mul
+from tinyec.ec import Point
+
+from .group import group_add, group_identity, group_scalar_mul, group_sub
+from .mod_arith import mod_add, mod_inv, mod_mul, random_scalar
 from .utils import inner_g, inner_z
 
 
 @dataclass
 class InnerProductProof:
-    L: List[int]
-    R: List[int]
+    L: List[Point]
+    R: List[Point]
+    u: List[int]
     a0: int
     b0: int
-    G0: int
-    H0: int
-    u: List[int]
+    G0: Point
+    H0: Point
 
 
 def inner_product_prove(
     a: List[int],
     b: List[int],
-    G: List[int],
-    H: List[int],
-    Q: int,
+    G: List[Point],
+    H: List[Point],
+    Q: Point,
 ) -> InnerProductProof:
     n = len(a)
     assert len(b) == n
@@ -32,7 +34,7 @@ def inner_product_prove(
 
     L_vals = []
     R_vals = []
-    u_ks = []
+    u_vals = []
 
     a_curr = a[:]
     b_curr = b[:]
@@ -65,7 +67,7 @@ def inner_product_prove(
 
         L_vals.append(L_k)
         R_vals.append(R_k)
-        u_ks.append(u_k)
+        u_vals.append(u_k)
 
         a_new, b_new, G_new, H_new = [], [], [], []
         for i in range(half):
@@ -90,17 +92,17 @@ def inner_product_prove(
     proof = InnerProductProof(
         L=L_vals,
         R=R_vals,
+        u=u_vals,
         a0=a_curr[0],
         b0=b_curr[0],
         G0=G_curr[0],
         H0=H_curr[0],
-        u=u_ks,
     )
     return proof
 
 
 def inner_product_verify(
-    G: List[int], H: List[int], Q: int, P: int, c: int, proof: InnerProductProof
+    G: List[Point], H: List[Point], Q: Point, P: Point, c: int, proof: InnerProductProof
 ) -> bool:
     # P + c*Q
     lhs = group_add(P, group_scalar_mul(Q, c))
@@ -119,6 +121,6 @@ def inner_product_verify(
         cross = group_add(cross, group_scalar_mul(L_j, u_j_sq))
         cross = group_add(cross, group_scalar_mul(R_j, u_j_inv_sq))
 
-        rhs = mod_sub(rhs, cross)
+        rhs = group_sub(rhs, cross)
 
     return lhs == rhs
