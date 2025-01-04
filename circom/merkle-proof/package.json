@@ -1,0 +1,23 @@
+{
+  "name": "set-membership",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "mocha ./tests/merkle-proof.test.js",
+    "script:generate-merkle-proof": "node ./scripts/generate-merkle-proof.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "chai": "^5.1.2",
+    "circom_tester": "^0.0.20",
+    "circomkit": "^0.3.2",
+    "circomlib": "^2.0.5",
+    "circomlibjs": "0.1.4",
+    "fixed-merkle-tree": "^0.7.3",
+    "mocha": "^11.0.1",
+    "snarkjs": "^0.7.5"
+  }
+}
